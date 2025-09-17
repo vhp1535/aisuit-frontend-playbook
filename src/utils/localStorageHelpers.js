@@ -3,7 +3,9 @@
 const STORAGE_KEYS = {
   HISTORY: 'aisuite_history',
   SETTINGS: 'aisuite_settings',
-  DEV_MODE: 'aisuite_dev_mode'
+  DEV_MODE: 'aisuite_dev_mode',
+  USER: 'aisuite_user',
+  USERS: 'aisuite_users'
 };
 
 // History management
@@ -163,6 +165,106 @@ export const importData = async (file) => {
   } catch (error) {
     console.error('Failed to import data:', error);
     return false;
+  }
+};
+
+// Authentication management
+export const authenticateUser = (email, password) => {
+  try {
+    // Demo user
+    if (email === 'demo@aisuite.com' && password === 'demo123') {
+      const user = {
+        id: 'demo-user',
+        name: 'Demo User',
+        email: 'demo@aisuite.com',
+        avatar: null,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+      return true;
+    }
+    
+    // Check registered users
+    const users = getUsers();
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+      const { password: _, ...userWithoutPassword } = user;
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userWithoutPassword));
+      return true;
+    }
+    
+    return false;
+  } catch (error) {
+    console.error('Authentication failed:', error);
+    return false;
+  }
+};
+
+export const registerUser = (name, email, password) => {
+  try {
+    const users = getUsers();
+    
+    // Check if user already exists
+    if (users.find(u => u.email === email)) {
+      return false;
+    }
+    
+    const newUser = {
+      id: Date.now().toString(),
+      name,
+      email,
+      password,
+      avatar: null,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Save to users list
+    users.push(newUser);
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+    
+    // Auto login
+    const { password: _, ...userWithoutPassword } = newUser;
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userWithoutPassword));
+    
+    return true;
+  } catch (error) {
+    console.error('Registration failed:', error);
+    return false;
+  }
+};
+
+export const getCurrentUser = () => {
+  try {
+    const user = localStorage.getItem(STORAGE_KEYS.USER);
+    return user ? JSON.parse(user) : null;
+  } catch (error) {
+    console.error('Failed to get current user:', error);
+    return null;
+  }
+};
+
+export const logoutUser = () => {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.USER);
+    return true;
+  } catch (error) {
+    console.error('Logout failed:', error);
+    return false;
+  }
+};
+
+export const isAuthenticated = () => {
+  return getCurrentUser() !== null;
+};
+
+const getUsers = () => {
+  try {
+    const users = localStorage.getItem(STORAGE_KEYS.USERS);
+    return users ? JSON.parse(users) : [];
+  } catch (error) {
+    console.error('Failed to load users:', error);
+    return [];
   }
 };
 

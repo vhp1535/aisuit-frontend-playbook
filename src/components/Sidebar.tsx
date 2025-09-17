@@ -14,7 +14,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const isActive = (path: string) => location.pathname === path;
 
   const navigationItems = [
-    { path: "/", icon: Home, label: "Dashboard" },
+    { path: "/dashboard", icon: Home, label: "Dashboard" },
+    { path: "/ai-tools", icon: MessageSquare, label: "AI Tools & Agents" },
     { path: "/assistant", icon: MessageSquare, label: "AI Assistant" },
     { 
       path: "/history", 

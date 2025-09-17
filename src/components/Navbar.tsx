@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, Settings as SettingsIcon, Zap, ZapOff } from "lucide-react";
-import { setDevMode } from "../utils/localStorageHelpers";
-import { getHistory } from "../utils/localStorageHelpers";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, Settings as SettingsIcon, Zap, ZapOff, User, LogOut, ChevronDown } from "lucide-react";
+import { setDevMode, getHistory, getCurrentUser, logoutUser } from "../utils/localStorageHelpers";
 
 interface NavbarProps {
   devMode: boolean;
@@ -11,13 +10,22 @@ interface NavbarProps {
 }
 
 const Navbar = ({ devMode, setDevMode: setDevModeState, onMenuClick }: NavbarProps) => {
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const history = getHistory();
+  const currentUser = getCurrentUser();
 
   const handleDevModeToggle = () => {
     const newMode = !devMode;
     setDevMode(newMode);
     setDevModeState(newMode);
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+    navigate('/');
+    setShowUserMenu(false);
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -49,6 +57,12 @@ const Navbar = ({ devMode, setDevMode: setDevModeState, onMenuClick }: NavbarPro
             className={isActive("/") ? "nav-link-active" : "nav-link"}
           >
             Home
+          </Link>
+          <Link
+            to="/ai-tools"
+            className={isActive("/ai-tools") ? "nav-link-active" : "nav-link"}
+          >
+            AI Tools
           </Link>
           <Link
             to="/assistant"
@@ -94,10 +108,49 @@ const Navbar = ({ devMode, setDevMode: setDevModeState, onMenuClick }: NavbarPro
           </span>
         </button>
 
-        {/* Demo Badge */}
-        <div className="hidden sm:flex items-center space-x-2 bg-coral text-white px-3 py-1 rounded-lg border border-navy text-sm font-semibold">
-          <span>Frontend-only Demo — No Backend</span>
-        </div>
+        {/* User Profile */}
+        {currentUser && (
+          <div className="relative">
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center space-x-2 px-3 py-2 rounded-lg border-2 border-navy bg-beige hover:bg-peach/20 transition-colors"
+            >
+              <div className="w-8 h-8 bg-peach border-2 border-navy rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-navy" />
+              </div>
+              <span className="hidden sm:inline text-sm font-semibold text-navy">
+                {currentUser.name}
+              </span>
+              <ChevronDown className="w-4 h-4 text-navy" />
+            </button>
+
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-48 panel py-2 z-50">
+                <div className="px-4 py-2 border-b-2 border-navy/20">
+                  <p className="text-sm font-semibold text-navy">{currentUser.name}</p>
+                  <p className="text-xs text-navy/60">{currentUser.email}</p>
+                </div>
+                
+                <Link
+                  to="/settings"
+                  className="flex items-center space-x-2 px-4 py-2 text-navy hover:bg-peach/20 transition-colors"
+                  onClick={() => setShowUserMenu(false)}
+                >
+                  <SettingsIcon className="w-4 h-4" />
+                  <span className="text-sm">Settings</span>
+                </Link>
+                
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 w-full px-4 py-2 text-navy hover:bg-coral/20 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm">Sign Out</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );

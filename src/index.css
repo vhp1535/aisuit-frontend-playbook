@@ -112,6 +112,17 @@
     @apply hover:translate-x-1 hover:translate-y-1 hover:shadow-none;
   }
 
+  .btn-outline {
+    @apply bg-transparent text-navy border-2 border-navy rounded-lg font-semibold px-4 py-2;
+    @apply transition-all duration-200 hover:bg-navy hover:text-cream;
+  }
+
+  .input-field {
+    @apply bg-cream border-2 border-navy rounded-lg px-4 py-2 w-full;
+    @apply font-medium text-navy placeholder:text-navy/60;
+    @apply focus:outline-none focus:ring-2 focus:ring-peach focus:border-peach;
+  }
+
   /* Input Components */
   .input-primary {
     @apply bg-beige border-navy rounded-lg px-4 py-3;
