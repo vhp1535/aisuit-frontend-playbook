@@ -13,7 +13,18 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['Monaco', 'Consolas', 'monospace'],
+      },
       colors: {
+        // AiSuite theme colors
+        cream: '#FBF6F1',
+        beige: '#FFF1D6',
+        navy: '#0B1220',
+        peach: '#F6A96B',
+        coral: '#FF4D6D',
+        // Design system tokens
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -58,10 +69,15 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      boxShadow: {
+        'offset': '8px 8px 0 #0B1220',
+        'offset-small': '4px 4px 0 #0B1220',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        'retro': '12px',
       },
       keyframes: {
         "accordion-down": {
@@ -80,10 +96,20 @@ export default {
             height: "0",
           },
         },
+        'bob': {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.7' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        'bob': 'bob 2s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
       },
     },
   },
